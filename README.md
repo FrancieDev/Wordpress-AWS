@@ -90,6 +90,8 @@ O restante das configurações permanece como padrão.
 
 O restante das configurações de "File System Policy" e "Review and Update" permanecem como padrão. Clicar em "Create".
 
+Na lista dos File Systems criados, podemos clicar no EFS que acabamos de criar e depois no botão "Attach", onde abrirar uma janela com informações para montarmos a EFS na instância EC2. Usaremos a opção "Mout via IP", dentro da Availability Zone "us-east-1a". Portanto, devemos guardar o comando citado abaixo da frase "Using the NFS cliente" para realizar a montagem via assistente NFS no Ubuntu, conforme veremos dentro do user data mais à frente na seção comentada do script "Montagem do EFS".
+
 ## 4) Criação do banco de dados Amazon RDS (Relational Data Base)
 
 Amazon RDS é um serviço da Amazon que facilita a configuração, operação e escalabilidade de um banco de dados relacional econômico e redimensionável na nuvem. Seguindo a arquitetura proposta no início, devemos criar um único banco de dados acessível pelas instâncias em zonas de disponibilidade diferentes. No painel da AWS, devemos clicar em RDS para seguir até o dashboard e, em seguida, clicar em "Create Database". Aplicaremos estas configurações:
@@ -130,4 +132,65 @@ No painel das ECS, no canto inferior direito, rolar até a opção "Elastic IPs"
 
 A fim de organizar os IPs públicos criados, podemos atribuir nomes a cada um deles. Para isso, na lista de Elastic IPs, basta clicar no campo "Name" que surgirá um novo campo para atribuir um nome.
 
-## 5) 
+## 5) Criação do script user data
+
+É possível executar comandos ao iniciar uma instância EC2 para executar tarefas de instalação e configuração através de um script chamado *user data* ou *dados do usuário*. Após a realização de alguns testes, chegou-se ao seguinte user data a ser inserido no momento da criação da instância EC2:
+
+```
+
+#!/bin/bash
+
+#Atualização dos pacotes com suas fontes
+
+sudo apt update
+
+#Atualização dos pacotes do sistema
+
+sudo apt upgrade -y
+
+#Instalação do Docker e Docker Compose
+
+sudo apt install docker.io -y
+sudo service docker start
+sudo systemctl enable docker
+sudo curl -SL https://github.com/docker/compose/releases/download/v2.30.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+#Montagem do EFS
+
+sudo apt-get -y install nfs-common
+sudo mkdir /efs
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.128.237:/ /efs
+sudo su
+sudo echo "10.0.128.237:/     /efs      nfs4      nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev      0      0" >> /etc/fstab
+
+#Criação do container Wordpress
+
+sudo mkdir /wordpress
+cd /wordpress
+sudo cat > docker-compose.yml << EOF
+version: '3.1'
+
+services:
+
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORD: adminwordpress1
+      WORDPRESS_DB_NAME: database-wordpress
+    volumes:
+      - /efs/wordpress:/var/www/html
+
+volumes:
+  wordpress:
+  db:
+EOF
+
+sudo docker-compose up -d
+
+```
