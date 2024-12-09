@@ -120,4 +120,14 @@ Amazon RDS é um serviço da Amazon que facilita a configuração, operação e 
    * VPC Security Group (firewall): choose existing
       * Existing VPC security groups: selecionar o security group criado no início (Wordpress-Firewall)
 
- O restante das configurações permanece como o padrão. Clicar em "Create database" e aguardar alguns minutos até que a criação esteja concluída e o status ".
+ O restante das configurações permanece como o padrão. Clicar em "Create database" e aguardar alguns minutos até que a criação esteja concluída com o status "Available".
+
+ ## 4) Criação dos Elastic IP para testes das instâncias
+
+Conforme o descritivo do projeto pela Compass, o serviço do Wordpress deverá ser publicado em IP privado por questões de segurança. Contudo, podemos associar IPs públicos estáticos para testar a conexão e deploy do Wordpress nas instâncias através dos Elastic IPs, que são IPs públicos da AWS que podem ser associados e desassociados a diferentes tipos de instâncias.
+
+No painel das ECS, no canto inferior direito, rolar até a opção "Elastic IPs" e clicar em "Allocate Elastic IP". Em "Network border group", clicar no grupo relativo às zonas de disponibilidade disponíveis para a rede que criamos e depois clicar em "Alocate". Este processo pode ser realizado várias vezes para alocar mais um IP em outra máquina da AWS ou até mesmo para Gateways NAT, conforme veremos mais à frente.
+
+A fim de organizar os IPs públicos criados, podemos atribuir nomes a cada um deles. Para isso, na lista de Elastic IPs, basta clicar no campo "Name" que surgirá um novo campo para atribuir um nome.
+
+## 5) 
