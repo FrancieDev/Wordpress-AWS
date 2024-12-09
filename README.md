@@ -28,7 +28,7 @@ Após a criação, a VPC deverá possuir a seguinte topologia conforme a imagem:
 
 ![Topologia VPC](https://github.com/user-attachments/assets/478cb3c1-c9b2-45ca-891c-f8462c98df10)
 
-## 1) Criação do Security Group
+## 2) Criação do Security Group
 
 Um security group atua como um firewall virtual para as instâncias a fim de controlar o tráfego de
 entrada e saída na rede. Configuraremos as regras de entrada e saída de tráfego através de cada protocolo e portas liberadas.
@@ -51,7 +51,8 @@ Clicar em "Add rule" e ir adicionando as seguintes configurações:
 | DNS (TCP) | TCP | 53 | Anywhere-IPv4 |
 | HTTP | TCP | 80 | Anywhere-IPv4 |
 | HTTPS | TCP | 443 | Anywhere-IPv4 |
-| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4
+| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4 |
+| NFS | TCP | 2049 | Anywhere-IPv4 |
 
 > Outbound rules (nesta seção criaremos as regras de tráfego de entrada de saída)
 
@@ -64,6 +65,27 @@ Clicar em "Add rule" e ir adicionando as seguintes configurações:
 | DNS (TCP) | TCP | 53 | Anywhere-IPv4 |
 | HTTP | TCP | 80 | Anywhere-IPv4 |
 | HTTPS | TCP | 443 | Anywhere-IPv4 |
-| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4
+| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4 |
+| NFS | TCP | 2049 | Anywhere-IPv4 |
 
 Clicar em "Create security group"
+
+## 3) Criação do EFS (Elastic File System)
+
+O EFS é uma tecnologia da AWS que permite criar um sistema de arquivos elástico que cresce ou diminui automaticamente a capacidade de armazenamento de arquivos conforme as demandas de cada aplicação. No painel da AWS, devemos clicar em EFS para seguir até o dashboard e, na sequência, clicar em "Create File System" e depois em "Customize". Usaremos as seguintes configurações:
+
+> File System Settings
+* Name: Inserir um nome para o EFS
+O restante das configurações permanece como padrão.
+> Network Access
+*  Virtual Private Cloud: Selecionar a VPC que criamos (wordpress-vpc)
+   -  Mount Targets (Ponte de montagem 1)
+      - Availability Zone: us-east-1a
+      - Subnet ID: selecionar uma subrede "private"
+      - Security Group: Wordpress-Firewall
+  -  Mount Targets (Ponto de montagem 2)
+      - Availability Zone: us-east-1b
+      - Subnet ID: selecionar uma subrede "private"
+      - Security Group: Wordpress-Firewall  
+
+O restante das configurações de "File System Policy" e "Review and Update" permanecem como padrão. Clicar em "Create".
