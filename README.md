@@ -27,3 +27,43 @@ Clicar em "Create VPC"
 Após a criação, a VPC deverá possuir a seguinte topologia conforme a imagem:
 
 ![Topologia VPC](https://github.com/user-attachments/assets/478cb3c1-c9b2-45ca-891c-f8462c98df10)
+
+## 1) Criação do Security Group
+
+Um security group atua como um firewall virtual para as instâncias a fim de controlar o tráfego de
+entrada e saída na rede. Configuraremos as regras de entrada e saída de tráfego através de cada protocolo e portas liberadas.
+No próprio dashboard da VPC, na parte inferior esquerda, rolamos até a opção "Security Group" e depois clicamos em "Create security Group". Usamos as seguintes configurações:
+
+> Basic details
+
+Security group name: inserir um nome para o security group
+Description: Firewall for VPC and instances
+VPC: selecionar a VPC que acabamos de criar
+
+> Inbound rules (nesta seção criaremos as regras de tráfego de entrada de rede)
+
+Clicar em "Add rule" e ir adicionando as seguintes configurações:
+
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| Custom TCP | TCP | 8080 | Anywhere-IPv4 |
+| SSH | TCP | 22 | Anywhere-IPv4 |
+| DNS (TCP) | TCP | 53 | Anywhere-IPv4 |
+| HTTP | TCP | 80 | Anywhere-IPv4 |
+| HTTPS | TCP | 443 | Anywhere-IPv4 |
+| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4
+
+> Outbound rules (nesta seção criaremos as regras de tráfego de entrada de saída)
+
+Clicar em "Add rule" e ir adicionando as seguintes configurações:
+
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| Custom TCP | TCP | 8080 | Anywhere-IPv4 |
+| SSH | TCP | 22 | Anywhere-IPv4 |
+| DNS (TCP) | TCP | 53 | Anywhere-IPv4 |
+| HTTP | TCP | 80 | Anywhere-IPv4 |
+| HTTPS | TCP | 443 | Anywhere-IPv4 |
+| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4
+
+Clicar em "Create security group"
