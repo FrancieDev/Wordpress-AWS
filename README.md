@@ -140,7 +140,7 @@ A fim de organizar os IPs públicos criados, podemos atribuir nomes a cada um de
 
 ## 5) Criação do script user data
 
-É possível executar comandos ao iniciar uma instância EC2 para executar tarefas de instalação e configuração através de um script chamado *user data* ou *dados do usuário*. Após a realização de alguns testes, chegou-se ao seguinte user data a ser inserido no momento da criação da instância EC2:
+É possível executar comandos ao iniciar uma instância EC2 para executar tarefas de instalação e configuração, ou para automatizar a criação das aplicações nas instâncias (como é o nosso caso), tudo realizado através de um script chamado *user data* ou *dados do usuário*. Após a realização de alguns testes, chegou-se ao seguinte user data a ser inserido no momento da criação da instância EC2:
 
 ```
 
@@ -200,3 +200,11 @@ EOF
 sudo docker-compose up -d
 
 ```
+
+## 7) Criação do Key Pairs para conexão às instâncias EC2 (opcional)
+
+
+
+## 8) Criação das Instâncias EC2 (Elastic Compute Cloud)
+
+A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Compute Cloud, ou simplesmete EC2, para criar máquinas virtuais chamadas de instâncias com diversas opções de processadores, armazenamento, redes e sistemas operacionais. A aplicação Wordpress será configurada usando a tecnologia de containers do docker dentro de cada instância EC2. Conforme o descritivo do projeto da Compass, podemos criar 2 instâncias EC2, cada uma em uma EZ (Availability Zone) distinta da outra. No painel da AWS, clicamos em "EC2" e seguimos para o dashboard de criação da instância.
