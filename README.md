@@ -89,3 +89,35 @@ O restante das configurações permanece como padrão.
       - Security Group: Wordpress-Firewall  
 
 O restante das configurações de "File System Policy" e "Review and Update" permanecem como padrão. Clicar em "Create".
+
+## 4) Criação do banco de dados Amazon RDS (Relational Data Base)
+
+Amazon RDS é um serviço da Amazon que facilita a configuração, operação e escalabilidade de um banco de dados relacional econômico e redimensionável na nuvem. Seguindo a arquitetura proposta no início, devemos criar um único banco de dados acessível pelas instâncias em zonas de disponibilidade diferentes. No painel da AWS, devemos clicar em RDS para seguir até o dashboard e, em seguida, clicar em "Create Database". Aplicaremos estas configurações:
+
+> Database creation method: Standard
+
+> Engine options: MySQL (conforme descrição do projeto Compass)
+
+> Engine Version: 8.0.39
+
+> Templates: Free tier (para teste de novas aplicações)
+ 
+> Availability and durability: Single DB instance
+ 
+> Settings
+   * DB Instance Identifier: Inserir o nome da base de dados (Ex: wordpress-database-1)
+   * Credentials Settings:
+   * Master username: inserir o username (Ex: admin)
+   * Credentials Management: Self managed
+   * Master password: inserir uma senha para acesso à base de dados
+     
+> Instance Configuration
+   * Busrtable classes: db.t3.micro
+     
+> Conectivity:
+
+   * Virtual Private Cloud (VPC): selecionar a VPC criada no início (wordpress-vpc)
+   * VPC Security Group (firewall): choose existing
+      * Existing VPC security groups: selecionar o security group criado no início (Wordpress-Firewall)
+
+ O restante das configurações permanece como o padrão. Clicar em "Create database" e aguardar alguns minutos até que a criação esteja concluída e o status ".
