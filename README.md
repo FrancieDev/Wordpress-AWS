@@ -90,7 +90,13 @@ O restante das configurações permanece como padrão.
 
 O restante das configurações de "File System Policy" e "Review and Update" permanecem como padrão. Clicar em "Create".
 
-Na lista dos File Systems criados, podemos clicar no EFS que acabamos de criar e depois no botão "Attach", onde abrirar uma janela com informações para montarmos a EFS na instância EC2. Usaremos a opção "Mout via IP", dentro da Availability Zone "us-east-1a". Portanto, devemos guardar o comando citado abaixo da frase "Using the NFS cliente" para realizar a montagem via assistente NFS no Ubuntu, conforme veremos dentro do user data mais à frente na seção comentada do script "Montagem do EFS".
+Na lista dos File Systems criados, podemos clicar no EFS que acabamos de criar e depois no botão "Attach", onde abrirar uma janela com informações para montarmos a EFS na instância EC2. Usaremos a opção "Mout via IP", dentro da Availability Zone "us-east-1a". Portanto, devemos guardar o comando citado abaixo da frase "Using the NFS cliente". Como exemplo, temos o comando:
+
+````
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.128.237:/ /efs
+````
+
+O qual será usado para realizar a montagem via assistente NFS no Ubuntu, conforme veremos mais à frente na seção comentada "Montagem do EFS" do script user data.
 
 ## 4) Criação do banco de dados Amazon RDS (Relational Data Base)
 
