@@ -166,9 +166,10 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 sudo apt-get -y install nfs-common
 sudo mkdir /efs
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.128.237:/ /efs
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.135.121:/ /efs
 sudo su
-sudo echo "10.0.128.237:/     /efs      nfs4      nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev      0      0" >> /etc/fstab
+sudo echo "10.0.135.121:/     /efs      nfs4      nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev      0      0" >> /etc/fstab
+exit
 
 #Criação do container Wordpress
 
@@ -255,3 +256,6 @@ A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Comput
   * User data: Neste campo vamos inserir o script user data para automatizar as tarefas de instalação do docker e Wordpress na inicialização da EC2. Podemos copiar e colar ou realizar uploado do arquivo.
 
 Clicar em "Launch Instance" e depois em "View all Instances". Aguardar o processo de criação e validação da instância, acompanhando pelo painel.
+
+Após o processo de validação da Instância, podemos atribuir um IP elástico a mesma para realizar a conexão SSH e verificar o estado da máquina antes de iniciar o serviço Wordpress. Para isso, vamos até a parte inferior esquerda do dashboard EC2, na seção "Network and Security" clique em "Elastic IPs". Selecione o IP criado anteriormente para a instância, clique em "Actions" e depois em "Associate Elastic IP adress".
+Na janela que se segue, selecione a Instância que está rodando, o IP privado e clique em "Associate".
