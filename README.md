@@ -2,7 +2,7 @@
 
 Este projeto fez parte das atividades de estágio no Studio de DevSecOps da Compass UOL, consistindo em efetuar deploy de uma aplicação do Wordpress conteinerizada em instâncias na AWS. Foram utilizadas algumas tecnologias como o Docker, Auto Scaling, EFS (Elastic File System) e LB (Load Balancer). O projeto precisou obrigatoriamente seguir a arquitetura fornecida pela Compass conforme mostrada abaixo:
 
-![Arquitetura do projeto](https://github.com/user-attachments/assets/cc86fa8f-1ac4-4275-bdd0-dd33aad6c5d6)
+![Arquitetura do projeto](https://github.com/user-attachments/assets/0c1bb0f5-a65a-4a40-92a2-927d5cd1bab3)
 
 Segue o passo a passo do projeto:
 
