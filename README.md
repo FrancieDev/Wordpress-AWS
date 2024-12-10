@@ -209,7 +209,11 @@ Podemos nos conectar às instâncias EC2 através de nossa máquina local utiliz
 * Key pair type: RSA
 * Private key file format: .pem (é possível usar o formato .ppk, caso utilize o PuTTy para conexão remota)
 
-Clique em "Create key pair" e será aberta uma janela para salvar o arquivo .pem em sua máquina local. Após salvar, copie a chave para a pasta raiz no seu sistema operacional, pois facilita posteriormente o reconhecimento da mesma quando utilizarmos o comando para a conexão SSH.
+Clique em "Create key pair" e será aberta uma janela para salvar o arquivo .pem em sua máquina local. Após salvar, copie a chave para a pasta raiz no seu sistema operacional, pois facilita posteriormente o reconhecimento da mesma quando utilizarmos o comando para a conexão SSH. Será preciso atribuir uma permissão ao arquivo .pem para conseguirmos estabelecer a conexão SSH, para isso, utilize o comando:
+
+````
+sudo chmod 400 nomedachave.pem
+````
 
 
 ## 8) Criação das Instâncias EC2 (Elastic Compute Cloud)
