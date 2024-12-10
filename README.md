@@ -169,14 +169,15 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 sudo apt-get -y install nfs-common
 sudo mkdir /efs
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.135.121:/ /efs
-sudo su
-sudo echo "10.0.135.121:/     /efs      nfs4      nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev      0      0" >> /etc/fstab
-exit
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.141.76:/ /efs
+sudo chmod 666 /etc/fstab
+sudo echo "10.0.141.76:/     /efs      nfs4      nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev      0      0" >> /etc/fstab
 
 #Criação do container Wordpress
 
 sudo mkdir /wordpress
+sudo chmod 666 /wordpress
+sudo chmod +x /wordpress
 cd /wordpress
 sudo cat > docker-compose.yml << EOF
 version: '3.1'
@@ -189,10 +190,10 @@ services:
     ports:
       - 8080:80
     environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: admin
-      WORDPRESS_DB_PASSWORD: adminwordpress1
-      WORDPRESS_DB_NAME: database-wordpress
+      WORDPRESS_DB_HOST: /inserir o endpoint da rds/
+      WORDPRESS_DB_USER: /inserir usuario/
+      WORDPRESS_DB_PASSWORD: /inserir senha de acesso/
+      WORDPRESS_DB_NAME: /inserir nome da base de dados/
     volumes:
       - /efs/wordpress:/var/www/html
 
