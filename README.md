@@ -128,6 +128,9 @@ Amazon RDS é um serviço da Amazon que facilita a configuração, operação e 
    * VPC Security Group (firewall): choose existing
       * Existing VPC security groups: selecionar o security group criado no início (Wordpress-Firewall)
 
+> Additional configuration:
+  * Initial database name: inserir um nome para a base de dados
+
  O restante das configurações permanece como o padrão. Clicar em "Create database" e aguardar alguns minutos até que a criação esteja concluída com o status "Available".
 
  ## 4) Elastic IP para testes das instâncias
