@@ -318,7 +318,11 @@ A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Comput
 
 Clicar em "Launch Instance" e depois em "View all Instances". Aguardar o processo de criação e validação da instância, acompanhando pelo painel.
 
-## 9) Bastion Host
+## 9) Launch Template
+
+XXX-XXXX
+
+## 10) Bastion Host
 
 Para acessarmos as instâncias privadas, será necessário a criação de uma máquina separada chamada de Bastion Host. Esta máquina estará alocada em uma subnet pública da VPC do projeto onde poderemos acessá-la remotamete via SSH e, por meio da mesma, acessar remotamente a instância privada da aplicação para realizar tarefas de manutenção.
 
@@ -368,3 +372,65 @@ Com o acesso ao Bastion Host bem-sucedido, podemos agora acessar as máquinas vi
 ```
 sudo ssh -i "key-name.pem" ubuntu@ecX-XX-XX-XXX-XXX.compute-1.amazonaws.com
 ```
+
+## 11) Load Balancer
+
+Load Balancer é um recurso da AWS que distribui o tráfego de entrada das aplicações para diversos alvos de instâncias EC2 em zonas de disponibilidade distintas. Este recurso aumenta a tolerância à falhas da aplicações, detectando instâncias que estão indisponíveis e roteando o tráfego apenas para as instâncias disponíveis. Utilizamos o Classic Load Balancer para o projeto. No dashboard EC2, clicar em "Load Balancers", depois em "Create Load Balancers" e selecionar "Classic Load Balancer". Usaremos os seguintes parâmetros para criação:
+
+* Basic configuration
+   * Load balancer name: inserir nome para o load balancer
+   * Scheme: internet-facing
+* Network mapping
+   * VPC: escolher a VPC do projeto
+   * Availability zones: selecionar 2 zones e 2 subnets públicas
+* Security group: selecionar o security group "Load Balancer"
+* Listeners and routing
+   * Listener HTTP:80
+      * Listener protocol: HTTP
+      * Listener port: 80
+      * Instance protocol: HTTP
+      * Instance port: 8080
+* Health checks
+   * Ping target
+      * Ping protocol: HTTP
+      * Ping port: 80
+      * Ping port: /wp-admin/install.php
+* Instances: clicar em "Add instances" e selecionar a(s) instância(s)
+
+O restante das configurações permanece como padrão. Clicar em "Create load balancer" e aguardar para que o mesmo realize as verificações de registro da instância e os "health checks". Acompanhar pela aba "Target Instances".
+
+## 12) Auto-Scaling Group
+
+O Amazon EC2 Auto Scaling é um recuro para garantir que a arquitetura tenha o número correto de instâncias EC2 disponíveis para processar a carga da aplicação. Basicamente, os grupos de Auto Scaling são coleções de instâncias EC2. Podemos especificar o número mínimo de instâncias em cada grupo do Auto Scaling, e mesmo garante que o grupo nunca seja menor que esse tamanho. Também podemos especificar o número máximo de instâncias em cada grupo do Auto Scaling, garantindo que o grupo nunca seja maior que esse tamanho. No dashboard EC2, clicar em "Auto-Scaling Groups" e depois em "Create Auto Scaling Group". Usaremos as seguintes configurações:
+
+STEP 1
+* Choose template name
+   * Auto scaling group name: inserir um nome para o auto-scaling
+   * Launch template: selecionar o launch template criado na Etapa 9
+   * Version: indicar a versão do template
+STEP 2
+* Network
+   * VPC: escolher a VPC do projeto
+   * Availability Zones and subnets: escolher as 2 redes privadas
+   * Availability Zone distribution: Balanced best effor
+STEP 3
+* Load balancing
+   * Attach to an existing load balancer
+* Attach to an existing load balancer
+   * Choose from Classic Load Balancers: Selecionar o Classic Load Balancer criado
+* VPC Lattice integration options
+   *  Select VPC Lattice service to attach: No VPC Lattice service
+* Health checks
+   * Marcar a opção "Turn on Elastic Load Balancing health checks"
+* Configure group size and scaling
+   * Group size
+      * Desired capacity (especificar o número desejado de instâncias no lançamento do grupo): 2
+   * Scaling
+      * Min desired capacity: 2
+      * Max desired capacity: 4
+   * Automatic scaling: Target tracking scaling policy
+   * Instance maintenance policy: No Policy
+ 
+As outras configurações permanecem no padrão. Clicar em "Skip to Review" e em "Create Auto Scaling Group" 
+
+
