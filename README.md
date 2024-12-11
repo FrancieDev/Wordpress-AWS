@@ -261,7 +261,7 @@ sudo docker-compose up -d
 
 ```
 
-O arquivo deste script user data pode ser acessado na íntegra na 
+O arquivo do script user data foi disponibilizado na íntegra na parte superior deste repositório para consultas. 
 
 ## 7) Key Pairs para conexão às instâncias EC2
 
