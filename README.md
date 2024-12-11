@@ -357,10 +357,14 @@ No painel da EC2, clicar em "Launch Instance" e usar as seguintes configuraçõe
 
 Após a validação da Instância, podemos atribuir um IP elástico ao Bastion Host para realizar a conexão SSH. Para isso, vamos até a parte inferior esquerda do dashboard EC2, na seção "Network and Security" clique em "Elastic IPs". Selecione o IP criado anteriormente para a instância, clique em "Actions" e depois em "Associate Elastic IP adress". Na janela que se segue, selecione a Instância do Bastion Host, o IP privado e clique em "Associate".
 
-Agora será possível acessar as instâncias privadas através do Bastion Host, bastando apenas copiar a chave .pem para a pasta raiz da instância do Bastion Host e realizar a conexão SSH pelo sua máquina no temrinal. Como exemplo, utilizei o terminal do Ubunto 22.04 em uma máquina local, acessando pasta raiz onde está localizada a chave .pem, basta inserir o seguinte comando para acessar o Bastion Host:
+Agora será possível acessar as instâncias privadas através do Bastion Host, bastando apenas copiar a chave .pem para a pasta /home/ubuntu da instância do Bastion Host e realizar a conexão SSH pelo sua máquina no temrinal. Como exemplo, utilizei o terminal do Ubuntu 22.04 em uma máquina local, acessando /home/<seu-nome-de-usuário> onde está localizada a chave *.pem*, bastando inserir o seguinte comando para acessar o Bastion Host:
 
 ```
 ssh -i "key-name.pem" ubuntu@ecX-XX-XX-XXX-XXX.compute-1.amazonaws.com
 ```
 
-Com o acesso ao Bastion Host bem-sucedido, podemos agora acessar as máquinas virtuais através do mesmo usando o comando de acesso fornecido na página "Connect to instance \ SSH client" em cada instância e realizar as tarefas necessárias.
+Com o acesso ao Bastion Host bem-sucedido, podemos agora acessar as máquinas virtuais através do mesmo usando o comando de acesso fornecido na página "Connect to instance \ SSH client" em cada instância e realizar as tarefas necessárias. Contudo, será preciso ter privilégio de super usuário para acessar as EC2, caso contrário dará um erro de acesso negado, por isso usamos o comando ssh junto com o sudo dentro do Bastion Host:
+
+```
+sudo ssh -i "key-name.pem" ubuntu@ecX-XX-XX-XXX-XXX.compute-1.amazonaws.com
+```
