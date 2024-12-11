@@ -34,15 +34,16 @@ Usamos as seguintes configurações na criação dos security groups:
 
 > Basic details
 
-Security group name: inserir um nome para os respectivos security groups (private-instance, bastion host, EFS, RDS, Load Balancer)
+Security group name: inserir um nome do respectivo security groups (private-instance, bastion host, EFS, RDS ou Load Balancer)
 Description: Firewall for VPC and instances
 VPC: selecionar a VPC que acabamos de criar
 
-> Inbound rules (nesta seção criaremos as regras de tráfego de entrada de rede)
+As regras de tráfego de entrada (inbound rules) e saída (outbound rules) dos security groups devem ser definidas nesta parte. Portanto, em cada security group, usar os seguintes parâmetros:
 
-Clicar em "Add rule" e ir adicionando as seguintes configurações:
 
-**Inbound Rules - EC2 Privada (private-instance)**
+**EC2 PRIVADA**
+
+**Inbound Rules**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
 | Custom TCP | TCP | 8080 | Load Balancer (security group) |
@@ -52,17 +53,60 @@ Clicar em "Add rule" e ir adicionando as seguintes configurações:
 | MYSQL/Aurora | TCP | 3306 | RDS (security group) |
 | NFS | TCP | 2049 | EFS |
 
-> Outbound rules (nesta seção criaremos as regras de tráfego de entrada de saída)
-
-As configurações das outbound rules para todos os security grupos serão "All traffic" conforme abaixo:
-
-**Outbound Rules - todos os security groups**
+**Outbound Rules**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
 | All traffic | All | All | Anywhere IPV4 |
 
+**BASTION HOST**
 
-Clicar em "Create security group"
+**Inbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| SSH | TCP | 22 | 0.0.0.0/0 |
+
+**Outbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| All traffic | All | All | Anywhere IPV4 |
+
+**RDS**
+
+**Inbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| MYSQL/Aurora | TCP | 3306 | private-instance (security group |
+
+**Outbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| All traffic | All | All | Anywhere IPV4 |
+
+**EFS**
+
+**Inbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| NFS | TCP | 2049 | private-instance (security group |
+
+**Outbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| All traffic | All | All | Anywhere IPV4 |
+
+**LOAD BALANCER**
+
+**Inbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| HTTPS | TCP | 443 | 0.0.0.0/0 |
+| HTTP | TCP | 80 | 0.0.0.0/0 |
+
+**Outbound Rules**
+| Type | Protocol | Port Range | Source |
+| :---: | :---: | :---: | :----: |
+| All traffic | All | All | Anywhere IPV4 |
+
 
 ## 3) EFS (Elastic File System)
 
