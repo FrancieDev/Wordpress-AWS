@@ -13,30 +13,28 @@ A VPC é a rede virtual privada na Amazon onde estarão as subredes privadas e p
 > VPC Settings
 
  * VPC and more
- * Name tag auto-generation (deixar o auto-generate marcado) e digitar o nome do projeto, no caso, "wordpress", pois este será o nome da VPC.
+ * Name tag auto-generation (deixar o auto-generate marcado) e digitar o nome do projeto, no caso, "wordpress-vpc", pois este será o nome da VPC.
  * Number of Availability Zones (AZs): 2
  * Number of public subnets : 2
  * Number o private subnets: 2
- * NAT gateways: None
+ * NAT gateways: None (será criado depois)
  * VPC endpoints: None
 
-O restante das configurações permanece conforme o padrão.
+O restante das configurações permanece conforme o padrão. Clicar em "Create VPC". Após a criação, devemos editar a tabela de rotas da VPC para fazer as associações corretas das subnets, rotas e gateway. Para isso, clicamos em "Route tables" onde aparece a lista das rotas. É possível renomear as rotas para um nome mais amigável, onde no projeto usaremos "route-public" para a rota da rede pública e "route-private" para a rota da rede privada. Começando pela route-public, clicamos nela e depois em "Edit routes" onde ali fazemos a associação para o Internet Gateway "igw". O mesmo será feito na route-private, porém neste momento a rota privada não terá uma NAT gateway para acesso à internet pelas máquinas privadas. Esta etapa será feita mais à frente.
 
-Clicar em "Create VPC"
-
-Após a criação, a VPC deverá possuir a seguinte topologia conforme a imagem:
+Após a criação e edição das rotas, a VPC deverá possuir a seguinte topologia conforme a imagem:
 
 ![Topologia VPC](https://github.com/user-attachments/assets/0ead1260-2c22-4725-a886-add914fbf4b8)
 
 ## 2) Security Group
 
-Um security group atua como um firewall virtual para as instâncias a fim de controlar o tráfego de
-entrada e saída na rede. Configuraremos as regras de entrada e saída de tráfego através de cada protocolo e portas liberadas.
-No próprio dashboard da VPC, na parte inferior esquerda, rolamos até a opção "Security Group" e depois clicamos em "Create security Group". Usamos as seguintes configurações:
+Um security group atua como um firewall virtual para as instâncias a fim de controlar o tráfego de entrada e saída na rede. Configuraremos as regras de entrada e saída de tráfego através de cada protocolo e portas liberadas. No próprio dashboard da VPC, na parte inferior esquerda, rolamos até a opção "Security Group" e depois clicamos em "Create security Group". Por questões de segurança, criaremos um security group para cada tipo de instância em nosso projeto: EC2 Privada, Bastion Host, RDS, EFS e Load Balancer.
+
+Usamos as seguintes configurações na criação dos security groups:
 
 > Basic details
 
-Security group name: inserir um nome para o security group
+Security group name: inserir um nome para os respectivos security groups (private-instance, bastion host, EFS, RDS, Load Balancer)
 Description: Firewall for VPC and instances
 VPC: selecionar a VPC que acabamos de criar
 
@@ -44,29 +42,25 @@ VPC: selecionar a VPC que acabamos de criar
 
 Clicar em "Add rule" e ir adicionando as seguintes configurações:
 
+**Inbound Rules - EC2 Privada (private-instance)**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
-| Custom TCP | TCP | 8080 | Anywhere-IPv4 |
-| SSH | TCP | 22 | Anywhere-IPv4 |
-| DNS (TCP) | TCP | 53 | Anywhere-IPv4 |
-| HTTP | TCP | 80 | Anywhere-IPv4 |
-| HTTPS | TCP | 443 | Anywhere-IPv4 |
-| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4 |
-| NFS | TCP | 2049 | Anywhere-IPv4 |
+| Custom TCP | TCP | 8080 | Load Balancer (security group) |
+| SSH | TCP | 22 | Bastion Host (security group) |
+| HTTP | TCP | 80 | Load Balancer (security group) |
+| HTTPS | TCP | 443 | Load Balancer (security group) |
+| MYSQL/Aurora | TCP | 3306 | RDS (security group) |
+| NFS | TCP | 2049 | EFS |
 
 > Outbound rules (nesta seção criaremos as regras de tráfego de entrada de saída)
 
-Clicar em "Add rule" e ir adicionando as seguintes configurações:
+As configurações das outbound rules para todos os security grupos serão "All traffic" conforme abaixo:
 
+**Outbound Rules - todos os security groups**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
-| Custom TCP | TCP | 8080 | Anywhere-IPv4 |
-| SSH | TCP | 22 | Anywhere-IPv4 |
-| DNS (TCP) | TCP | 53 | Anywhere-IPv4 |
-| HTTP | TCP | 80 | Anywhere-IPv4 |
-| HTTPS | TCP | 443 | Anywhere-IPv4 |
-| MYSQL/Aurora | TCP | 3306 | Anywhere-IPv4 |
-| NFS | TCP | 2049 | Anywhere-IPv4 |
+| All traffic | All | All | Anywhere IPV4 |
+
 
 Clicar em "Create security group"
 
