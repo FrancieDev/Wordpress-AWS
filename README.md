@@ -51,12 +51,14 @@ As regras de tráfego de entrada (inbound rules) e saída (outbound rules) dos s
 | HTTP | TCP | 80 | Load Balancer (security group) |
 | HTTPS | TCP | 443 | Load Balancer (security group) |
 | MYSQL/Aurora | TCP | 3306 | RDS (security group) |
-| NFS | TCP | 2049 | EFS |
+| NFS | TCP | 2049 | EFS (security group) |
 
 **Outbound Rules**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
 | All traffic | All | All | Anywhere IPV4 |
+
+----------------------------------------------
 
 **BASTION HOST**
 
@@ -70,29 +72,35 @@ As regras de tráfego de entrada (inbound rules) e saída (outbound rules) dos s
 | :---: | :---: | :---: | :----: |
 | All traffic | All | All | Anywhere IPV4 |
 
+----------------------------------------------
+
 **RDS**
 
 **Inbound Rules**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
-| MYSQL/Aurora | TCP | 3306 | private-instance (security group |
+| MYSQL/Aurora | TCP | 3306 | private-instance (security group) |
 
 **Outbound Rules**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
 | All traffic | All | All | Anywhere IPV4 |
+
+----------------------------------------------
 
 **EFS**
 
 **Inbound Rules**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
-| NFS | TCP | 2049 | private-instance (security group |
+| NFS | TCP | 2049 | private-instance (security group) |
 
 **Outbound Rules**
 | Type | Protocol | Port Range | Source |
 | :---: | :---: | :---: | :----: |
 | All traffic | All | All | Anywhere IPV4 |
+
+----------------------------------------------
 
 **LOAD BALANCER**
 
@@ -128,7 +136,7 @@ O restante das configurações permanece como padrão.
 
 O restante das configurações de "File System Policy" e "Review and Update" permanecem como padrão. Clicar em "Create".
 
-Na lista dos File Systems criados, podemos clicar no EFS que acabamos de criar e depois no botão "Attach", onde abrirar uma janela com informações para montarmos a EFS na instância EC2. Usaremos a opção "Mout via IP", dentro da Availability Zone "us-east-1a". Portanto, devemos guardar o comando citado abaixo da frase "Using the NFS cliente". Como exemplo, temos o comando:
+Na lista dos File Systems criados, podemos clicar no EFS que acabamos de criar e depois no botão "Attach", onde abrirar uma janela com informações para montarmos a EFS na instância EC2. Usaremos a opção "Mout via IP", dentro da Availability Zone "us-east-1a". Portanto, devemos guardar o comando citado abaixo da frase "Using the NFS client". Como exemplo, temos o comando:
 
 ````
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.135.121:/ /efs
@@ -171,29 +179,26 @@ Amazon RDS é um serviço da Amazon que facilita a configuração, operação e 
 
  O restante das configurações permanece como o padrão. Clicar em "Create database" e aguardar alguns minutos até que a criação esteja concluída com o status "Available".
 
- ## 4) Elastic IP para testes das instâncias
+## 5) Script user data
 
-Conforme o descritivo do projeto pela Compass, o serviço do Wordpress deverá ser publicado em IP privado por questões de segurança. Contudo, podemos associar IPs públicos estáticos para testar a conexão e deploy do Wordpress nas instâncias através dos Elastic IPs, que são IPs públicos da AWS que podem ser associados e desassociados a diferentes tipos de instâncias.
+É possível executar comandos ao iniciar uma instância EC2 para automatizar a execução de tarefas de instalação e configuração das máquinas virtuais. Tal automatização é feita através de um shell script chamado de *user data* ou *dados do usuário* contendo todos os comandos que devem ser realizados na inicialização de uma nova instância. Após a realização de alguns testes, chegou-se ao seguinte user data que será comentado em detalhes abaixo.
 
-No painel das ECS, no canto inferior direito, rolar até a opção "Elastic IPs" e clicar em "Allocate Elastic IP". Em "Network border group", clicar no grupo relativo às zonas de disponibilidade disponíveis para a rede que criamos e depois clicar em "Alocate". Este processo pode ser realizado várias vezes para alocar mais um IP em outra máquina da AWS ou até mesmo para Gateways NAT, conforme veremos mais à frente.
-
-A fim de organizar os IPs públicos criados, podemos atribuir nomes a cada um deles. Para isso, na lista de Elastic IPs, basta clicar no campo "Name" que surgirá um novo campo para atribuir um nome.
-
-## 5) Criação do script user data
-
-É possível executar comandos ao iniciar uma instância EC2 para executar tarefas de instalação e configuração, ou para automatizar a criação das aplicações nas instâncias (como é o nosso caso), tudo realizado através de um script chamado *user data* ou *dados do usuário*. Após a realização de alguns testes, chegou-se ao seguinte user data a ser inserido no momento da criação da instância EC2:
+A primeira parte do script executa a atualização dos pacotes instalados com suas fontes e a atualização dos pacotes do sistema Linux: 
 
 ```
 
 #!/bin/bash
 
-#Atualização dos pacotes com suas fontes
+#Atualização dos pacotes com suas fontes e do sistema
 
 sudo apt update
-
-#Atualização dos pacotes do sistema
-
 sudo apt upgrade -y
+
+```
+
+A segunda parte do script executa comandos na seguinte ordem: baixar e instalar os pacotes de instalação do docker, iniciar o serviço do docker, habilitar o serviço do docker na inicialização do sistema, baixar e instalar os pacotes do docker-compose e alterar a permissão do diretório do docker-compose para execução de scripts.
+
+```
 
 #Instalação do Docker e Docker Compose
 
@@ -203,6 +208,12 @@ sudo systemctl enable docker
 sudo curl -SL https://github.com/docker/compose/releases/download/v2.30.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+```
+
+A terceira parte do script executa comandos na seguinte ordem: baixar e instalar os pacotes do nfs-common (utilitário para montagem do EFS), criar um diretório para a montagem do EFS, executar a montagem do EFS a partir do comando de montagem fornecido pela AWS conforme mostrado na Etapa 3, alterar a permissão do diretório fstab para leitura e escrita, inserir no arquivo fstab as informações do EFS através do comando "echo" fazendo com que o NFS seja sempre iniciado junto com o reinício da instância.
+
+```
+
 #Montagem do EFS
 
 sudo apt-get -y install nfs-common
@@ -210,6 +221,12 @@ sudo mkdir /efs
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.141.76:/ /efs
 sudo chmod 666 /etc/fstab
 sudo echo "10.0.141.76:/     /efs      nfs4      nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev      0      0" >> /etc/fstab
+
+```
+
+A quarta parte do script executa comandos na seguinte ordem: criar um diretório para armazenar o arquivo de manifesto docker-compose.yml, atribuir permissão de leitura e escrita ao diretório criado, atribuir permissão de execução de script ao diretório, acessar o diretório criado, criar um arquivo de manifesto docker-compose.yml que baixará a imagem do wordpress e iniciará o serviço de conteiner no docker através do comando cat junto com o parâmetro EOF, e por último, executa o comando para iniciar o serviços conteinerizados que foram declarados no arquivo docker-compose.yml
+
+```
 
 #Criação do container Wordpress
 
@@ -243,6 +260,8 @@ EOF
 sudo docker-compose up -d
 
 ```
+
+O arquivo deste script user data pode ser acessado na íntegra na 
 
 ## 7) Key Pairs para conexão às instâncias EC2
 
