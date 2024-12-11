@@ -263,7 +263,7 @@ sudo docker-compose up -d
 
 O arquivo do script user data foi disponibilizado na íntegra na parte superior deste repositório para consultas. 
 
-## 7) Key Pairs para conexão às instâncias EC2
+## 6) Key Pairs para conexão às instâncias EC2
 
 Podemos nos conectar às instâncias EC2 através de nossa máquina local utilizando protocolo SSH para realizar tarefas de manutenção nas instâncias remotamente. Para isso, será preciso gerar um Key Pair, um arquivo para baixarmos e utilizar como chave-segredo para realizar a conexão remota. No dashboard da EC2, rolar na parte inferior esquerda da seção "NetWork and Security" até a opção "Key Pairs". Usaremos as seguintes configurações:
 
@@ -278,9 +278,9 @@ sudo chmod 400 nomedachave.pem
 ````
 
 
-## 8) NAT Gateway
+## 7) NAT Gateway
 
-## 9) Criação das Instâncias EC2 (Elastic Compute Cloud)
+## 8) Criação das Instâncias EC2 (Elastic Compute Cloud)
 
 A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Compute Cloud, ou simplesmete EC2, para criar máquinas virtuais chamadas de instâncias com diversas opções de processadores, armazenamento, redes e sistemas operacionais. A aplicação Wordpress será configurada usando a tecnologia de containers do docker dentro de cada instância EC2. Conforme o descritivo do projeto da Compass, podemos criar 2 instâncias EC2, cada uma em uma EZ (Availability Zone) distinta da outra. No painel da AWS, clicamos em "EC2" e seguimos para o dashboard de criação da instância. Clique em "Launch Instances" e, na tela de criação, usaremos os seguintes parâmetros para criar a instância:
 
@@ -320,11 +320,11 @@ A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Comput
 
 Clicar em "Launch Instance" e depois em "View all Instances". Aguardar o processo de criação e validação da instância, acompanhando pelo painel.
 
-## 10) Launch Template
+## 9) Launch Template
 
 XXX-XXXX
 
-## 11) Bastion Host
+## 10) Bastion Host
 
 Para acessarmos as instâncias privadas, será necessário a criação de uma máquina separada chamada de Bastion Host. Esta máquina estará alocada em uma subnet pública da VPC do projeto onde poderemos acessá-la remotamete via SSH e, por meio da mesma, acessar remotamente a instância privada da aplicação para realizar tarefas de manutenção.
 
@@ -401,7 +401,7 @@ Load Balancer é um recurso da AWS que distribui o tráfego de entrada das aplic
 
 O restante das configurações permanece como padrão. Clicar em "Create load balancer" e aguardar para que o mesmo realize as verificações de registro da instância e os "health checks". Acompanhar pela aba "Target Instances".
 
-## 13) Auto-Scaling Group
+## 12) Auto-Scaling Group
 
 O Amazon EC2 Auto Scaling é um recuro para garantir que a arquitetura tenha o número correto de instâncias EC2 disponíveis para processar a carga da aplicação. Basicamente, os grupos de Auto Scaling são coleções de instâncias EC2. Podemos especificar o número mínimo de instâncias em cada grupo do Auto Scaling, e mesmo garante que o grupo nunca seja menor que esse tamanho. Também podemos especificar o número máximo de instâncias em cada grupo do Auto Scaling, garantindo que o grupo nunca seja maior que esse tamanho. No dashboard EC2, clicar em "Auto-Scaling Groups" e depois em "Create Auto Scaling Group". Usaremos as seguintes configurações:
 
@@ -434,5 +434,8 @@ STEP 3
    * Instance maintenance policy: No Policy
  
 As outras configurações permanecem no padrão. Clicar em "Skip to Review" e em "Create Auto Scaling Group" 
+
+## 13) Conclusões
+XXX-XXX
 
 
