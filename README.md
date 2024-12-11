@@ -248,7 +248,7 @@ services:
       WORDPRESS_DB_HOST: /inserir o endpoint da rds/
       WORDPRESS_DB_USER: /inserir usuario/
       WORDPRESS_DB_PASSWORD: /inserir senha de acesso/
-      WORDPRESS_DB_NAME: /inserir nome da base de dados/
+      WORDPRESS_DB_NAME: /inserir nome da base de dados <Initial database name>/
     volumes:
       - /efs/wordpress:/var/www/html
 
@@ -271,7 +271,7 @@ Podemos nos conectar às instâncias EC2 através de nossa máquina local utiliz
 * Key pair type: RSA
 * Private key file format: .pem (é possível usar o formato .ppk, caso utilize o PuTTy para conexão remota)
 
-Clique em "Create key pair" e será aberta uma janela para salvar o arquivo .pem em sua máquina local. Após salvar, copie a chave para a pasta raiz no seu sistema operacional, pois facilita posteriormente o reconhecimento da mesma quando utilizarmos o comando para a conexão SSH. Será preciso atribuir uma permissão ao arquivo .pem para conseguirmos estabelecer a conexão SSH, para isso, utilize o comando:
+Clique em "Create key pair" e será aberta uma janela para salvar o arquivo .pem em sua máquina local. Após salvar, copie a chave para a pasta raiz na sua máquina local, pois facilita posteriormente o reconhecimento da mesma quando utilizarmos o comando no terminal para a conexão SSH. Será preciso atribuir uma permissão ao arquivo .pem para conseguirmos estabelecer a conexão SSH, para isso, utilize o comando:
 
 ````
 sudo chmod 400 nomedachave.pem
@@ -290,11 +290,11 @@ A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Comput
   * Resource types: marcar "Instances" e "Volumes"
   (2)
   * Key: CostCenter
-  * Value: conforme fornecido pela Compass
+  * Value: *fornecido pela Compass*
   * Resource types: marcar "Instances" e "Volumes"
   (3)
   * Key: Project
-  * Value: conforme fornecido pela Compass
+  * Value: *fornecido pela Compass*
   * Resource types: marcar "Instances" e "Volumes"
 
 > Application and OS images
@@ -308,13 +308,13 @@ A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Comput
 
 > Network settings (clicar em Edit)
   * VPC: usar a VPC criada
-  * Subnet: usar uma subnet pública, preferencial na zona us-east-1a
+  * Subnet: usar uma subnet privada, preferencial na zona us-east-1a
   * Auto-assign public IP: Disable
   * Firewall (security groups)
-    * Select existing security group: selecionar o security group criado inicialmente (Wordpress-Firewall)
+    * Select existing security group: selecionar o security group criado para as EC2 privadas (private-instance)
 
 > Advanced Details
-  * User data: Neste campo vamos inserir o script user data para automatizar as tarefas de instalação do docker e Wordpress na inicialização da EC2. Podemos copiar e colar ou realizar uploado do arquivo.
+  * User data: Neste campo vamos inserir o *script user data* para automatizar as tarefas de instalação do docker e Wordpress na inicialização da EC2. Podemos copiar e colar o script neste campo ou realizar upload do arquivo.
 
 Clicar em "Launch Instance" e depois em "View all Instances". Aguardar o processo de criação e validação da instância, acompanhando pelo painel.
 
@@ -357,4 +357,10 @@ No painel da EC2, clicar em "Launch Instance" e usar as seguintes configuraçõe
 
 Após a validação da Instância, podemos atribuir um IP elástico ao Bastion Host para realizar a conexão SSH. Para isso, vamos até a parte inferior esquerda do dashboard EC2, na seção "Network and Security" clique em "Elastic IPs". Selecione o IP criado anteriormente para a instância, clique em "Actions" e depois em "Associate Elastic IP adress". Na janela que se segue, selecione a Instância do Bastion Host, o IP privado e clique em "Associate".
 
-Agora será possível acessar as instâncias privadas através do Bastion Host, bastando apenas copiar a chave .pem para a pasta raiz do Bastion Host e realizar a conexão SSH conforme explicada anteriormente.
+Agora será possível acessar as instâncias privadas através do Bastion Host, bastando apenas copiar a chave .pem para a pasta raiz da instância do Bastion Host e realizar a conexão SSH pelo sua máquina no temrinal. Como exemplo, utilizei o terminal do Ubunto 22.04 em uma máquina local, acessando pasta raiz onde está localizada a chave .pem, basta inserir o seguinte comando para acessar o Bastion Host:
+
+```
+ssh -i "key-name.pem" ubuntu@ecX-XX-XX-XXX-XXX.compute-1.amazonaws.com
+```
+
+Com o acesso ao Bastion Host bem-sucedido, podemos agora acessar as máquinas virtuais através do mesmo usando o comando de acesso fornecido na página "Connect to instance \ SSH client" em cada instância e realizar as tarefas necessárias.
