@@ -1,4 +1,4 @@
-# Projeto Wordpress-AWS-Docker
+# Projeto de aplicação Wordpress em AWS-Docker
 
 Este projeto fez parte das atividades de estágio no Studio de DevSecOps da Compass UOL, consistindo em efetuar deploy de uma aplicação do Wordpress conteinerizada em instâncias na AWS. Foram utilizadas algumas tecnologias como o Docker, Auto Scaling, EFS (Elastic File System) e LB (Load Balancer). O projeto precisou obrigatoriamente seguir a arquitetura fornecida pela Compass conforme mostrada abaixo:
 
@@ -261,5 +261,43 @@ A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Comput
 
 Clicar em "Launch Instance" e depois em "View all Instances". Aguardar o processo de criação e validação da instância, acompanhando pelo painel.
 
-Após o processo de validação da Instância, podemos atribuir um IP elástico a mesma para realizar a conexão SSH e verificar o estado da máquina antes de iniciar o serviço Wordpress. Para isso, vamos até a parte inferior esquerda do dashboard EC2, na seção "Network and Security" clique em "Elastic IPs". Selecione o IP criado anteriormente para a instância, clique em "Actions" e depois em "Associate Elastic IP adress".
-Na janela que se segue, selecione a Instância que está rodando, o IP privado e clique em "Associate".
+## 9) Bastion Host
+
+Para acessarmos as instâncias privadas, será necessário a criação de uma máquina separada chamada de Bastion Host. Esta máquina estará alocada em uma subnet pública da VPC do projeto onde poderemos acessá-la remotamete via SSH e, por meio da mesma, acessar remotamente a instância privada da aplicação para realizar tarefas de manutenção.
+
+No painel da EC2, clicar em "Launch Instance" e usar as seguintes configurações:
+
+> Name and tags (clicar em Add additional tags)
+  Usaremos um conjunto de 3 tags (Name, CostCenter, Project) conforme fornecidas pela Compasso:
+  (1)
+  * Key: Name
+  * Value: Inserir um nome para o bastion host (ex.: Sebastião Host)
+  * Resource types: marcar "Instances" e "Volumes"
+  (2)
+  * Key: CostCenter
+  * Value: conforme fornecido pela Compass
+  * Resource types: marcar "Instances" e "Volumes"
+  (3)
+  * Key: Project
+  * Value: conforme fornecido pela Compass
+  * Resource types: marcar "Instances" e "Volumes"
+
+> Application and OS images
+  * Ubuntu Noble 24.04 amd64 (Free tier eligible)
+
+> Instance type
+  *t2.micro (Free tier eligible)
+
+> Key pair (login)
+  * Key pair name: usar a key pair criada na etapa anterior
+
+> Network settings (clicar em Edit)
+  * VPC: usar a VPC criada
+  * Subnet: usar uma subnet pública, preferencial na zona us-east-1a
+  * Auto-assign public IP: Disable
+  * Firewall (security groups)
+    * Select existing security group: selecionar o security group criado para bastion host
+
+Após a validação da Instância, podemos atribuir um IP elástico ao Bastion Host para realizar a conexão SSH. Para isso, vamos até a parte inferior esquerda do dashboard EC2, na seção "Network and Security" clique em "Elastic IPs". Selecione o IP criado anteriormente para a instância, clique em "Actions" e depois em "Associate Elastic IP adress". Na janela que se segue, selecione a Instância do Bastion Host, o IP privado e clique em "Associate".
+
+Agora será possível acessar as instâncias privadas através do Bastion Host, bastando apenas copiar a chave .pem para a pasta raiz do Bastion Host e realizar a conexão SSH conforme explicada anteriormente.
