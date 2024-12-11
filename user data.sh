@@ -41,7 +41,7 @@ services:
       WORDPRESS_DB_HOST: /inserir o endpoint da rds/
       WORDPRESS_DB_USER: /inserir usuario/
       WORDPRESS_DB_PASSWORD: /inserir senha de acesso/
-      WORDPRESS_DB_NAME: /inserir nome da base de dados/
+      WORDPRESS_DB_NAME: /inserir nome da base de dados <Initial database name>/
     volumes:
       - /efs/wordpress:/var/www/html
 
