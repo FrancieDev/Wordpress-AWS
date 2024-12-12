@@ -491,7 +491,17 @@ stress --cpu 50 --vm-bytes 128M
 
 Após alguns segundos, é possível verificar que o AutoScaling iniciou a criação de uma nova instância em resposta ao teste de integridade:
 
+![Histórico CloudWatch_AutoScaling_iniciando instância](https://github.com/user-attachments/assets/f1de304e-6eea-4e75-b0e6-3bf6cefae805)
 
+Podemos verificar também na lista de instâncias que uma nova máquina foi iniciada:
+
+![Instância iniciando](https://github.com/user-attachments/assets/e5af4094-f62d-4fd9-b238-ae040a84622a)
+
+Podemos agora encerrar o teste de estresse no terminal digitando CTRL + C e acompanhar no histórico do Auto-scaling o encerramento da instância, bem como na lista das EC2:
+
+![Histórico CloudWatch_AutoScaling_encerrando instância](https://github.com/user-attachments/assets/4af3fe50-612f-466c-aa28-f10c9ad0e003)
+
+![Encerrando Instância](https://github.com/user-attachments/assets/d12237b3-b514-438b-8864-b0b2f4935457)
 
 ## 14) Conclusões
 Este projeto foi uma excelente oportunidade para praticar os conhecimentos adquiridos em AWS, Docker e Microsserviços, constituindo uma base sólida para a criação de novos projetos mais complexos. Agradeço a Compass UOL pela oportunidade da prática e orientação cuidadosa durante a execução do trabalho.  
