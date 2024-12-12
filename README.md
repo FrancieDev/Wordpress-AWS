@@ -337,7 +337,28 @@ Clicar em "Launch Instance" e depois em "View all Instances". Aguardar o process
 
 ## 9) Launch Template
 
-XXX-XXXX
+Launch Template é um recurso da AWS que permite reutilizarmos as configurações de criação de instâncias em execução. O template pode ser reutilizado, compartilhado e usado para iniciar novas instâncias, além de possuir diversas versões que ficam registradas em um histórico. Este recurso será importante também para a configuração do grupo Auto-Scaling que será explicado mais à frente. Existem duas formas de criamos o Launch Template: clicando no menu do EC2 "Launch Templates" ou diretamente pelas configurações da EC2. Usaremos a segunda opção, pois assim conseguimos copiar automaticamente todas as configurações da instância para o template.
+
+Para isso, no dashboard EC2, clicamos em "Instances running", selecionamos e clicamos na instância EC2 que criamos na etapa anterior. No menu "Actions" e em "Images and templates" selecionamos "Create template from instance". Nesta tela, quase todas as configurações da EC2 criada foram aplicadas no template, bastando realizar alguns ajustes. Faremos as seguintes configurações:
+
+* Launch template name and description
+   * Launch template name - required: inserir um nome para o Launch Template
+   * Template version description: inserir uma descrição para a versão do template (ex: version 1 ou v1)
+   * Auto Scaling guidance: marcar "Provide guidance to help me set up a template that I can use with EC2 Auto Scaling"
+* Network settings
+   * Subnet: Selecionar "Don't include in launch template" (a subnet do template será atribuída pelo Auto-Scalling)
+* Resource tags
+   * Key (Name): private1
+      * Resource types: Instances, Volumes
+ * Key (CostCenter): *fornecido pela Compass*
+      * Resource types: Instances, Volumes
+ * Key (Name): *fornecido pela Compass*
+      * Resource types: Instances, Volumes
+ * Advanced details
+    *  Shutdown behavior: Dont't include in launch template
+    *  Stop - Hibernate behavior: Dont't include in launch template
+
+Clicar em "Create Launch template" e o modelo já estará pronto para uso posteriormente pelo Auto-Scaling.
 
 ## 10) Bastion Host
 
