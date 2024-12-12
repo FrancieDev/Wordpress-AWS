@@ -472,6 +472,6 @@ STEP 3
 As outras configurações permanecem no padrão. Clicar em "Skip to Review" e em "Create Auto Scaling Group" 
 
 ## 13) Conclusões
-XXX-XXX
+Este projeto foi uma excelente oportunidade para praticar os conhecimentos adquiridos em AWS, Docker e Microsserviços, constituindo uma base sólida para a criação de novos projetos mais complexos. Agradeço a Compass UOL pela oportunidade da prática e orientação cuidadosa durante a execução do trabalho.  
 
 
