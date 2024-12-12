@@ -471,7 +471,29 @@ STEP 3
  
 As outras configurações permanecem no padrão. Clicar em "Skip to Review" e em "Create Auto Scaling Group" 
 
-## 13) Conclusões
+## 13) Teste de Desempenho do Auto-Scaling
+
+Para testar se o grupo Auto-scaling está funcionando corretamente, criando e encerrando instâncias com base na integridade das mesmas, podemos realizar um teste de desempenho utilizando um utilitário do próprio sistema da instância para estressar a CPU. Para isso, acessamos uma das instâncias EC2 via Bastion Host e instalamos o pacote de stress test com o seguinte comando:
+
+```
+sudo apt install stress
+```
+
+Agora, podemos iniciar um teste para estressar a CPU da instância usando os seguintes parâmetros:
+
+```
+stress --cpu 50 --vm-bytes 128M
+```
+
+É possível acompanhar o resultado do teste no painel do CloudWatch agent pela aba "Monitoring", tanto na instância como no Auto-Scaling. Acompanhando pelo CloudWatch agent da instância, observamos um incremento de 100% na atividade da CPU:
+
+![Gráfico_incremento CPU](https://github.com/user-attachments/assets/297f92ca-04dc-43da-b765-b4797f91549a)
+
+Após alguns segundos, é possível verificar que o AutoScaling iniciou a criação de uma nova instância em resposta ao teste de integridade:
+
+
+
+## 14) Conclusões
 Este projeto foi uma excelente oportunidade para praticar os conhecimentos adquiridos em AWS, Docker e Microsserviços, constituindo uma base sólida para a criação de novos projetos mais complexos. Agradeço a Compass UOL pela oportunidade da prática e orientação cuidadosa durante a execução do trabalho.  
 
 
