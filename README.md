@@ -280,6 +280,21 @@ sudo chmod 400 nomedachave.pem
 
 ## 7) NAT Gateway
 
+Como explicado no início, as máquinas EC2 serão criadas dentro das subnets privadas as quais ainda não possuem um ponto de acesso à internet. Para que as instâncias nas redes privadas consigam acessar a internet para baixar pacotes, mas que não possam ser acessíveis ao mundo exterior, precisamos criar um NAT gateway e conectá-lo à nossa VPC por meio das redes públicas. Para a criação do NAT gateway, acessamos o console da VPC e nos dirigimos até a lista de opções à esquerda. No submenu "Virtual Private Cloud" clicamos em "NAT gateways" e depois em "Create NAT gateway". Usamos os seguintes parâmetros:
+
+* NAT Gateway settings
+   * Name: inserir um nome (ex: NAT gateway_wordpress)
+   * Subnet: escolher uma **subnet pública**
+   * Connectivity type: Public
+   * Elastic IP allocation ID: clicar em "Allocate Elastic IP"
+
+Clicar em "Create NAT Gateway" e aguardar a confirmação da criação. Com o NAT Gateway criado, devemos agora associá-lo à tabela de rotas da rede privada. No console da VPC, clique em "Route Tables" e na lista das rotas, clicar na tabela de rotas privadas (route-private) e na próxima tela clicar em "Edit routes". Usamos os seguintes parâmetros para criar a rota da rede privada até o NAT Gateway:
+
+* Destination: 0.0.0.0/0
+* Target: NAT Gateway / (selecionar o NAT Gateway criado pelo pelo prefixo nat-)
+
+Após clicar em "Save Changes" o NAT Gateway estará coretamente associado às redes privadas através das redes públicas e as instâncias EC2 terão acesso à internet para baixar e instalar pacotes.
+
 ## 8) Criação das Instâncias EC2 (Elastic Compute Cloud)
 
 A Amazon oferece uma plataforma de computação chamada de Amazon Elastic Compute Cloud, ou simplesmete EC2, para criar máquinas virtuais chamadas de instâncias com diversas opções de processadores, armazenamento, redes e sistemas operacionais. A aplicação Wordpress será configurada usando a tecnologia de containers do docker dentro de cada instância EC2. Conforme o descritivo do projeto da Compass, podemos criar 2 instâncias EC2, cada uma em uma EZ (Availability Zone) distinta da outra. No painel da AWS, clicamos em "EC2" e seguimos para o dashboard de criação da instância. Clique em "Launch Instances" e, na tela de criação, usaremos os seguintes parâmetros para criar a instância:
