@@ -471,7 +471,7 @@ STEP 3
  
 As outras configurações permanecem no padrão. Clicar em "Skip to Review" e em "Create Auto Scaling Group" 
 
-## 13) Teste de Desempenho do Auto-Scaling
+## 13) Teste e Monitoramento do Auto-Scaling pelo CloudWatch Agent
 
 Para testar se o grupo Auto-scaling está funcionando corretamente, criando e encerrando instâncias com base na integridade das mesmas, podemos realizar um teste de desempenho utilizando um utilitário do próprio sistema da instância para estressar a CPU. Para isso, acessamos uma das instâncias EC2 via Bastion Host e instalamos o pacote de stress test com o seguinte comando:
 
